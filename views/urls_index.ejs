@@ -23,7 +23,8 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="row">Long URL</th>
-          <th scope="col1">Delete</th>
+          <th scope="editCol">Edit</th>
+          <th scope="deleteCol">Delete</th>
         </tr>
       </thead>
     <tbody>
@@ -31,6 +32,12 @@
         <tr>
           <td><%= url %></td>
           <td><%= urls[url] %></td>
+
+          <td>
+            <form method="GET" action="/urls/<%= url %>">
+              <button type="submit" class="btn btn-info">Edit</button>
+            </form>
+        </td>
           <td><form method="POST" action="/urls/<%= url %>/delete">
             <button type="submit" class="btn btn-danger">Delete</button>
           </form></td>
@@ -39,7 +46,6 @@
     </tbody>
     </table>
 
-    <link rel="stylesheet" href="#">   <!--Dead link for now. Will be used to shorten URL-->
   </main>
 
   <!-- Bootstrap JS-->

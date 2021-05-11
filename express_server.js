@@ -28,6 +28,11 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   return res.redirect('/urls')
 })
 
+app.post("/urls/:shortURL/edit", (req, res) => {
+  let shortURL = req.params.shortURL;
+  urlDatabase[req.params.shortURL] = req.body.edit
+  return res.redirect(`/urls/${shortURL}`)
+})
 
 app.get("/", (req, res) => {
   res.send(`Welcome!`)
