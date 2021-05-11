@@ -1,12 +1,14 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080; // defaul port 8080
 
 app.set("view engine", "ejs");
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 
 let urlDatabase = {
@@ -26,13 +28,21 @@ app.post("/urls", (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
   return res.redirect('/urls')
-})
+});
 
 app.post("/urls/:shortURL/edit", (req, res) => {
   let shortURL = req.params.shortURL;
   urlDatabase[req.params.shortURL] = req.body.edit
   return res.redirect(`/urls/${shortURL}`)
+});
+
+
+app.post("/urls/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  return res.redirect("/urls")
 })
+
+
 
 app.get("/", (req, res) => {
   res.send(`Welcome!`)
