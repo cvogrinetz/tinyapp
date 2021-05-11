@@ -23,6 +23,12 @@ app.post("/urls", (req, res) => {
 });
 
 
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  return res.redirect('/urls')
+})
+
+
 app.get("/", (req, res) => {
   res.send(`Welcome!`)
 });
