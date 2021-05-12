@@ -11,6 +11,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 
+
+// Objects
+
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -26,6 +29,7 @@ const users = {
 };
 
 
+// POST paths
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
@@ -39,6 +43,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   return res.redirect('/urls')
 });
 
+
 app.post("/urls/:shortURL/edit", (req, res) => {
   let shortURL = req.params.shortURL;
   urlDatabase[req.params.shortURL] = req.body.edit
@@ -47,25 +52,25 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-
   if(!emailLookup(req.body.email, users)) {
     return res.status(403).send('Error Email doesnt exist')
   } 
-  
+
   const id = returnUserID(req.body.email, users);
   
   if (req.body.password !== users[id].password) {
     return res.status(403).send('Error wrong password. Try Again!');
   }
-  res.cookie('user_id', id);
-  return res.redirect('/urls');
+  res.cookie("user_id", id);
+  return res.redirect("/urls");
 });
-
+  
 
 app.post("/logout", (req, res) => {
-res.clearCookie("username", req.body.username)
-return res.redirect("/urls")
+  res.clearCookie("user_id", users[req.cookies["user_id"]])
+  return res.redirect("/urls")
 });
+
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
@@ -78,11 +83,13 @@ app.post("/register", (req, res) => {
     let id = generateRandomString()
     users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
     res.cookie("user_id", users[id].id)
-    console.log("TEST IN REGISTER: ", users[id].id)  //test
     return res.redirect("/urls")
   };
 })
   
+
+
+// GET paths
 
 app.get("/", (req, res) => {
   res.send(`Welcome!`)
@@ -108,10 +115,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-
-  // console.log(users[req.cookies]);
-  // console.log(users[req.cookies["user_id"]]);
-
   const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   res.render("urls_index", templateVars);
 });
@@ -127,19 +130,25 @@ app.get("/register", (req, res) => {
   res.render('urls_register', templateVars)
 });
 
+
 app.get('/login', (req, res) => {
   const templateVars = { user: req.cookies['user_id'] };
   res.render('urls_login', templateVars)
 });
 
 
+
+
+// Listen Paths
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+
+
+
+// Functions
 
 
 // Short Url generator.
@@ -147,7 +156,8 @@ const generateRandomString = () => {
   return Math.random().toString(30).substr(2, 6)
 };
 
-// Compare new users to ones already stored in users object
+
+// Compare new users to ones already stored in Users object
 const emailLookup = (newUser, userObject) => {
   for(const user in userObject) {
     if(newUser === userObject[user].email) {
@@ -158,10 +168,11 @@ const emailLookup = (newUser, userObject) => {
 };
 
 
+// Used to get the user_id to be able to access Users objects in login Post
 const returnUserID = (email, usersObject) => {
   for (let user in usersObject) {
     if (email === usersObject[user].email) {
       return usersObject[user].id
     }
   }
-}
+};
