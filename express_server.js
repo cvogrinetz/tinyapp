@@ -17,6 +17,8 @@ let urlDatabase = {
 };
 
 
+const users = {};
+
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
@@ -46,6 +48,13 @@ app.post("/logout", (req, res) => {
 res.clearCookie("username", req.body.username)
 return res.redirect("/urls")
 });
+
+app.post("/register", (req, res) => {
+  let id = generateRandomString()
+  users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
+  res.cookie("user_id", users[id].id)
+  return res.redirect("/urls")
+})
 
 
 
