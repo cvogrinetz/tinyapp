@@ -18,15 +18,10 @@ let urlDatabase = {
 
 
 const users = {
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
+  "kq5hcg": {
+    id: 'kq5hcg',
+    email: 'bitterfunk@gmail.com',
+    password: 'bittertang'
   }
 };
 
@@ -52,9 +47,20 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username); 
-  return res.redirect("/urls")
+
+  if(!emailLookup(req.body.email, users)) {
+    return res.status(403).send('Error Email doesnt exist')
+  } 
+  
+  const id = returnUserID(req.body.email, users);
+  
+  if (req.body.password !== users[id].password) {
+    return res.status(403).send('Error wrong password. Try Again!');
+  }
+  res.cookie('user_id', id);
+  return res.redirect('/urls');
 });
+
 
 app.post("/logout", (req, res) => {
 res.clearCookie("username", req.body.username)
@@ -72,6 +78,7 @@ app.post("/register", (req, res) => {
     let id = generateRandomString()
     users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
     res.cookie("user_id", users[id].id)
+    console.log("TEST IN REGISTER: ", users[id].id)  //test
     return res.redirect("/urls")
   };
 })
@@ -102,7 +109,8 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/urls", (req, res) => {
 
-  console.log(users);
+  // console.log(users[req.cookies]);
+  // console.log(users[req.cookies["user_id"]]);
 
   const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   res.render("urls_index", templateVars);
@@ -115,11 +123,13 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/register", (req, res) => {
-
-  // console.log(users)
-
   const templateVars = { user: req.cookies["user_id"] };
   res.render('urls_register', templateVars)
+});
+
+app.get('/login', (req, res) => {
+  const templateVars = { user: req.cookies['user_id'] };
+  res.render('urls_login', templateVars)
 });
 
 
@@ -146,3 +156,12 @@ const emailLookup = (newUser, userObject) => {
   }
     return false;
 };
+
+
+const returnUserID = (email, usersObject) => {
+  for (let user in usersObject) {
+    if (email === usersObject[user].email) {
+      return usersObject[user].id
+    }
+  }
+}
