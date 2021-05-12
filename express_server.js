@@ -31,6 +31,7 @@ const users = {
 };
 
 
+
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
@@ -61,17 +62,20 @@ return res.redirect("/urls")
 });
 
 app.post("/register", (req, res) => {
-  if(!req.body.email || !req.body.password) {
-    res.statusCode = 400;
-    res.send(' Error 400 : Invalid email or password')
-  }
-  let id = generateRandomString()
-  users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
-  res.cookie("user_id", users[id].id)
-  return res.redirect("/urls")
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send(' Error 400 : Invalid email or password')
+    res.end()
+  } else if (emailLookup(req.body.email, users)) {
+    res.status(400).send('Error 400 : Email already exists')
+    res.end();
+  } else {
+    let id = generateRandomString()
+    users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
+    res.cookie("user_id", users[id].id)
+    return res.redirect("/urls")
+  };
 })
-
-
+  
 
 app.get("/", (req, res) => {
   res.send(`Welcome!`)
@@ -97,6 +101,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
+
+  console.log(users);
+
   const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   res.render("urls_index", templateVars);
 });
@@ -108,6 +115,9 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/register", (req, res) => {
+
+  // console.log(users)
+
   const templateVars = { user: req.cookies["user_id"] };
   res.render('urls_register', templateVars)
 });
@@ -127,12 +137,12 @@ const generateRandomString = () => {
   return Math.random().toString(30).substr(2, 6)
 };
 
-
+// Compare new users to ones already stored in users object
 const emailLookup = (newUser, userObject) => {
   for(const user in userObject) {
     if(newUser === userObject[user].email) {
       return true; 
     }
-    return false;
   }
+    return false;
 };
