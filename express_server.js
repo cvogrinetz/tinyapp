@@ -61,10 +61,13 @@ return res.redirect("/urls")
 });
 
 app.post("/register", (req, res) => {
+  if(!req.body.email || !req.body.password) {
+    res.statusCode = 400;
+    res.send(' Error 400 : Invalid email or password')
+  }
   let id = generateRandomString()
   users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
   res.cookie("user_id", users[id].id)
-  // console.log(req.cookies[user[id]])
   return res.redirect("/urls")
 })
 
@@ -94,9 +97,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  console.log(users[req.cookies["user_id"]])
-  console.log(req.cookies)
-
   const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   res.render("urls_index", templateVars);
 });
@@ -108,7 +108,6 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/register", (req, res) => {
-  // console.log(req.body)
   const templateVars = { user: req.cookies["user_id"] };
   res.render('urls_register', templateVars)
 });
@@ -126,4 +125,14 @@ app.get("/hello", (req, res) => {
 // Short Url generator.
 const generateRandomString = () => {
   return Math.random().toString(30).substr(2, 6)
+};
+
+
+const emailLookup = (newUser, userObject) => {
+  for(const user in userObject) {
+    if(newUser === userObject[user].email) {
+      return true; 
+    }
+    return false;
+  }
 };
