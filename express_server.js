@@ -40,12 +40,12 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   return res.redirect("/urls")
-})
+});
 
 app.post("/logout", (req, res) => {
 res.clearCookie("username", req.body.username)
 return res.redirect("/urls")
-})
+});
 
 
 
@@ -80,6 +80,13 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+
+app.get("/register", (req, res) => {
+  // console.log(req.body)
+  const templateVars = { username: req.cookies["username"]}
+  res.render('urls_register', templateVars)
 });
 
 
