@@ -14,10 +14,17 @@ app.use(cookieParser());
 
 // Objects
 
-let urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+const urlDatabase = {
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
+
+
+
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",  //old database
+//   "9sm5xK": "http://www.google.com"
+// };
 
 
 const users = {
@@ -33,7 +40,7 @@ const users = {
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = { longURL: req.body.longURL, userID: users[req.cookies["user_id"]] };
   return res.redirect(`/urls/${shortURL}`)
 });
 
@@ -118,6 +125,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
+  console.log(urlDatabase)
   const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   return res.render("urls_index", templateVars);
 });
