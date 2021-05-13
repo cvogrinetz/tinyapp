@@ -98,16 +98,16 @@ app.post("/register", (req, res) => {
   } else {
     let id = generateRandomString()
     let password = bcrypt.hashSync(req.body.password, 10)
-
-   
-
     users[id] = { id: id, email: `${req.body.email}`, password: `${password}`}
-    console.log(users[id].password)
-    console.log(password)
+    // console.log(users[id].password)
+    // console.log(password)
     req.session.user_id = users[id].id
     return res.redirect("/urls")
   };
 })
+
+   
+
   
 
 
