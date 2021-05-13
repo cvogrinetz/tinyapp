@@ -31,11 +31,11 @@
     <tbody>
       <% const urlsForUsers = (id) => {        %>
       <%   for(let url in urls) {              %>
-      <%     if(id === urls[url].userID) {     %>
         <tr>
           <td><%= url %></td>
           <td><%= urls[url].longURL %></td>
-
+          
+      <%    if(id === urls[url].userID) {      %>
           <td>
             <form method="GET" action="/urls/<%= url %>">
               <button type="submit" class="btn btn-info">Edit</button>
@@ -45,14 +45,13 @@
             <button type="submit" class="btn btn-danger">Delete</button>
           </form></td>
         </tr>
-      <%    } %>
-      <%   }  %>
-      <%  }   %>
+    
+        <%    } %>
+        <%   }  %>
+        <%  }   %>
+        
+        <% urlsForUsers(user.id) %>
       
-      <% urlsForUsers(user.id) %>
-      </tbody>
-    </table>
-
   </main>
  <% } %>
   <!-- Bootstrap JS-->

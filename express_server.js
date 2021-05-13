@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
-const PORT = 8080; // defaul port 8080
+const PORT = 8080; // default port 8080
 const { generateRandomString, emailLookup, returnUserID } = require('./helpers');
 
 
@@ -29,10 +29,16 @@ const urlDatabase = {
 const users = {
   // "kq5hcg": {
   //   id: 'kq5hcg',
-  //   email: 'bitterfunk@gmail.com',
+  //   email: 'bitterfunk@example.com',
   //   password: 'bittertang'
+  // },
+  // "zl2ape": {
+  //   id: 'zl2ape',
+  //   email: 'example@example.com',
+  //   password: 'example'
   // }
 };
+
 
 
 // POST paths
@@ -102,7 +108,6 @@ app.post("/register", (req, res) => {
 
    
 
-
 // GET paths
 
 app.get("/", (req, res) => {
@@ -110,8 +115,17 @@ app.get("/", (req, res) => {
 });
 
 
+app.get("/urls", (req, res) => {
+  if (!users[req.session.user_id]) {
+    return res.redirect("/login");
+  }
+  const templateVars = { urls: urlDatabase, user: users[req.session.user_id] };
+  return res.render("urls_index", templateVars);
+});
+
+
 app.get("/urls/new", (req, res) => {
-  if (!req.session.user_id) {
+  if (!users[req.session.user_id]) {
     return res.redirect("/login");
   }
   const templateVars = { user: users[req.session.user_id] };
@@ -131,20 +145,6 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
-app.get("/urls", (req, res) => {
-  if (!req.session.user_id) {
-    return res.redirect("/login");
-  }
-  const templateVars = { urls: urlDatabase, user: users[req.session.user_id] };
-  return res.render("urls_index", templateVars);
-});
-
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-
 app.get("/register", (req, res) => {
   const templateVars = { user: users[req.session.user_id] };
   return res.render('urls_register', templateVars);
@@ -156,6 +156,10 @@ app.get('/login', (req, res) => {
   return res.render('urls_login', templateVars);
 });
 
+
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
 
 
 
