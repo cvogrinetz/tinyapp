@@ -16,10 +16,10 @@
         <a class="username"> Logged in as :  <%- user.email %>    </a>
         <button type="submit" class="btn btn-outline-dark">Logout</button>
         <%  }  %>
-      </form>
+    </form>
 
 
-      <form method="GET" action="/login">
+    <form method="GET" action="/login">
       <% if(!user) { %>
       <button type="submit" class="btn btn-outline-dark">Login</button>
     </form>
@@ -28,22 +28,6 @@
       
       <% } %>
     </form>
-      
-      
-
-
-      
-      
-      <!-- <form method="POST" action="/login">
-        <% if(!user) { %>
-          <input type="text" name="username" placeholder="Username">
-          <button type="submit" class="btn btn-outline-dark">Login</button>
-          
-          <%  } %>
-          
-        </form> -->
-      
-      
-
+    
   </nav>
 </header>
