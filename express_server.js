@@ -1,11 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
-// const cookieParser = require('cookie-parser');
+
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080; // defaul port 8080
+const { generateRandomString, emailLookup, returnUserID } = require('./helpers')
 
 app.set("view engine", "ejs");
 app.use(morgan('dev'));
@@ -97,9 +98,12 @@ app.post("/register", (req, res) => {
   } else {
     let id = generateRandomString()
     let password = bcrypt.hashSync(req.body.password, 10)
+
+   
+
     users[id] = { id: id, email: `${req.body.email}`, password: `${password}`}
-    // console.log(users[id].password)
-    // console.log(hashedPassword)
+    console.log(users[id].password)
+    console.log(password)
     req.session.user_id = users[id].id
     return res.redirect("/urls")
   };
@@ -178,27 +182,27 @@ app.listen(PORT, () => {
 
 
 // Short Url generator.
-const generateRandomString = () => {
-  return Math.random().toString(30).substr(2, 6)
-};
+// const generateRandomString = () => {
+//   return Math.random().toString(30).substr(2, 6)
+// };
 
 
-// Compare new users to ones already stored in Users object
-const emailLookup = (newUser, userObject) => {
-  for(const user in userObject) {
-    if(newUser === userObject[user].email) {
-      return true; 
-    }
-  }
-    return false;
-};
+// // Compare new users to ones already stored in Users object
+// const emailLookup = (newUser, userObject) => {
+//   for(const user in userObject) {
+//     if(newUser === userObject[user].email) {
+//       return true; 
+//     }
+//   }
+//     return false;
+// };
 
 
-// Used to get the user_id to be able to access Users objects in login Post
-const returnUserID = (email, usersObject) => {
-  for (let user in usersObject) {
-    if (email === usersObject[user].email) {
-      return usersObject[user].id
-    }
-  }
-};
+// // Used to get the user_id to be able to access Users objects in login Post
+// const returnUserID = (email, usersObject) => {
+//   for (let user in usersObject) {
+//     if (email === usersObject[user].email) {
+//       return usersObject[user].id
+//     }
+//   }
+// };
