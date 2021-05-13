@@ -21,12 +21,6 @@ const urlDatabase = {
 
 
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",  //old database
-//   "9sm5xK": "http://www.google.com"
-// };
-
-
 const users = {
   "kq5hcg": {
     id: 'kq5hcg',
@@ -132,7 +126,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  console.log(urlDatabase)
   if(!users[req.cookies["user_id"]]) {
     return res.redirect("/login")
    }
