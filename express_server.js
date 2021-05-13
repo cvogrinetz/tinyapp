@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080; // defaul port 8080
 
@@ -10,6 +11,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+// const password = 'bittertang';
+// const hashedPassword = bcrypt.hashSync(password, 10);
+// console.log(hashedPassword)
 
 
 // Objects
@@ -22,11 +26,11 @@ const urlDatabase = {
 
 
 const users = {
-  "kq5hcg": {
-    id: 'kq5hcg',
-    email: 'bitterfunk@gmail.com',
-    password: 'bittertang'
-  }
+  // "kq5hcg": {
+  //   id: 'kq5hcg',
+  //   email: 'bitterfunk@gmail.com',
+  //   password: 'bittertang'
+  // }
 };
 
 
@@ -65,8 +69,7 @@ app.post("/login", (req, res) => {
   } 
 
   const id = returnUserID(req.body.email, users);
-  
-  if (req.body.password !== users[id].password) {
+  if (!bcrypt.compareSync(req.body.password, users[id].password)) {
     return res.status(403).send('Error wrong password. Try Again!');
   }
   res.cookie("user_id", id);
@@ -89,7 +92,10 @@ app.post("/register", (req, res) => {
     res.end();
   } else {
     let id = generateRandomString()
-    users[id] = { id: id, email: `${req.body.email}`, password: `${req.body.password}`}
+    let password = bcrypt.hashSync(req.body.password, 10)
+    users[id] = { id: id, email: `${req.body.email}`, password: `${password}`}
+    // console.log(users[id].password)
+    // console.log(hashedPassword)
     res.cookie("user_id", users[id].id)
     return res.redirect("/urls")
   };
