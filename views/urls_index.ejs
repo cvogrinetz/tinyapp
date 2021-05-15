@@ -31,11 +31,13 @@
     <tbody>
       <% const urlsForUsers = (id) => {        %>
       <%   for(let url in urls) {              %>
+      <%    if(id === urls[url].userID) {      %>
+
+
         <tr>
-          <td><%= url %></td>
+          <td><a href="<%= urls[url].longURL %>"><%= url %></a></td>
           <td><%= urls[url].longURL %></td>
           
-      <%    if(id === urls[url].userID) {      %>
           <td>
             <form method="GET" action="/urls/<%= url %>">
               <button type="submit" class="btn btn-info">Edit</button>
